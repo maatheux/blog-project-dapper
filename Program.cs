@@ -11,6 +11,10 @@ class Program
     static void Main(string[] args)
     {
         ReadUsers();
+        // ReadUser();
+        // CreateUser();
+        // UpdateUser();
+        // DeleteUser();
     }
 
     public static void ReadUsers()
@@ -25,4 +29,67 @@ class Program
             }
         }
     }
+
+    public static void ReadUser()
+    {
+        using (var connection = new SqlConnection(CONNECTION_STRING))
+        {
+            var user = connection.Get<User>(1);
+
+            Console.WriteLine(user.Name);
+        }
+    }
+
+    public static void CreateUser()
+    {
+        using (var connection = new SqlConnection(CONNECTION_STRING))
+        {
+            User newUser = new User() {
+                Name = "Matheus",
+                Bio = "Hello World",
+                Email = "matheus@balta.io",
+                Image = "matheus-png",
+                PasswordHash = "HASH",
+                Slug = "/matheus-lima"
+            };
+
+            connection.Insert<User>(newUser);
+
+            Console.WriteLine($"User cadastrado!");
+        }
+    }
+
+    public static void UpdateUser()
+    {
+        using (var connection = new SqlConnection(CONNECTION_STRING))
+        {
+            User newUser = new User() {
+                Id = 2,
+                Name = "Matheus Lima",
+                Bio = "Hello World",
+                Email = "matheus@balta.io",
+                Image = "matheus-png",
+                PasswordHash = "HASH",
+                Slug = "/matheus-lima"
+            };
+
+            connection.Update<User>(newUser);
+
+            Console.WriteLine($"User atualizado!");
+        }
+    }
+
+    public static void DeleteUser()
+    {
+        using (var connection = new SqlConnection(CONNECTION_STRING))
+        {
+            var user = connection.Get<User>(2);
+
+            connection.Delete<User>(user);
+
+            Console.WriteLine($"User deletado!");
+        }
+    }
+
+    
 }
