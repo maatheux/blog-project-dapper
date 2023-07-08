@@ -20,6 +20,30 @@ public class UserRepository
     => _connection.Get<User>(id);
 
   public void Create(User newUser)
-    => _connection.Insert<User>(newUser); // expression body
+  {
+    newUser.Id = 0;
+    _connection.Insert<User>(newUser);
+  }
+    
+  public void Update(User user)
+  {
+    if (user.Id != 0)
+      _connection.Update<User>(user);
+  }
+
+  public void Delete(User user)
+  {
+    if (user.Id != 0)
+      _connection.Delete<User>(user);
+  }
+
+  public void Delete(int id)
+  {
+    if (id != 0)
+    {
+      var user = _connection.Get<User>(id);
+      _connection.Delete<User>(user);
+    }
+  }
 
 }
