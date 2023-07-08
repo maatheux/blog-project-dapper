@@ -1,6 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 using projeto_blog.Models;
+using projeto_blog.Repositories;
 
 namespace projeto_blog;
 
@@ -10,24 +11,26 @@ class Program
 
     static void Main(string[] args)
     {
-        ReadUsers();
+        var connection = new SqlConnection(CONNECTION_STRING);
+
+        connection.Open();
+
+        ReadUsers(connection);
         // ReadUser();
         // CreateUser();
         // UpdateUser();
         // DeleteUser();
+
+        connection.Close();
     }
 
-    public static void ReadUsers()
+    public static void ReadUsers(SqlConnection connection)
     {
-        using (var connection = new SqlConnection(CONNECTION_STRING))
-        {
-            var users = connection.GetAll<User>(); // metodo do dapper.contrib -> nao precisando usar uma sql query pra fazer a consulta
+        var repository = new UserRepository(connection);
+        IEnumerable<User> users = repository.GetAll();
 
-            foreach (User user in users)
-            {
-                Console.WriteLine(user.Name);
-            }
-        }
+        foreach (User user in users)
+            Console.WriteLine(user.Name);
     }
 
     public static void ReadUser()
