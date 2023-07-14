@@ -42,5 +42,18 @@ class Program
         }
     }
 
+    public static void ReadTags(SqlConnection connection)
+    {
+        var repository = new Repository<Tag>(connection);
+        IEnumerable<Tag> tags = repository.Get();
+
+        foreach (Tag tag in tags)
+        {
+            Console.WriteLine(tag.Name);
+        }
+    }
+
+    // Fazer o delete, update e create
+
     
 }
