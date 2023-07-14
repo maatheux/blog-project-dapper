@@ -24,8 +24,8 @@ class Program
 
     public static void ReadUsers(SqlConnection connection)
     {
-        var repository = new UserRepository(connection);
-        IEnumerable<User> users = repository.GetAll();
+        var repository = new Repository<User>(connection);
+        IEnumerable<User> users = repository.Get();
 
         foreach (User user in users)
             Console.WriteLine(user.Name);
@@ -33,8 +33,8 @@ class Program
 
     public static void ReadRoles(SqlConnection connection)
     {
-        var repository = new RoleRepository(connection);
-        IEnumerable<Role> roles = repository.GetAll();
+        var repository = new Repository<Role>(connection);
+        IEnumerable<Role> roles = repository.Get();
 
         foreach (Role role in roles)
         {
