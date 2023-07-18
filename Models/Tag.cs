@@ -9,6 +9,6 @@ public class Tag
   public string Name { get; set; }
   public string Slug { get; set; }
 
-  // [Write(false)]
-  // public List<Post> Posts { get; set; }
+  [Write(false)]
+  public List<Post> Posts { get; set; }
 }

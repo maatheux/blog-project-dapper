@@ -15,9 +15,22 @@ class Program
 
         connection.Open();
 
-        // ReadUsers(connection);
+        User myNewUser = new User() {
+            Id = 3,
+            Name = "Testando update",
+            Bio = "Testando bio",
+            Email = "teste@email",
+            Image = "utlimage.com",
+            PasswordHash = "hash",
+            Slug = "teste-user",
+        };
+        // CreateUser(connection, myNewUser);
+        // UpdateUser(connection, myNewUser);
+        // DeleteUser(connection, myNewUser);
 
-        ReadRoles(connection);
+        ReadUsers(connection);
+
+        // ReadRoles(connection);
 
         connection.Close();
     }
@@ -28,7 +41,15 @@ class Program
         IEnumerable<User> users = repository.Get();
 
         foreach (User user in users)
+        {
             Console.WriteLine(user.Name);
+            
+            foreach (Role role in user.Roles)
+            {
+                Console.WriteLine($" - {role.Name}");
+            }
+        }
+            
     }
 
     public static void ReadRoles(SqlConnection connection)
@@ -54,6 +75,27 @@ class Program
     }
 
     // Fazer o delete, update e create
+
+    public static void CreateUser(SqlConnection connection, User user)
+    {
+        var repository = new Repository<User>(connection);
+
+        repository.Create(user);
+    }
+
+    public static void UpdateUser(SqlConnection connection, User user)
+    {
+        var repository = new Repository<User>(connection);
+
+        repository.Update(user);
+    }
+
+    public static void DeleteUser(SqlConnection connection, User user)
+    {
+        var repository = new Repository<User>(connection);
+
+        repository.Delete(user);
+    }
 
     
 }
