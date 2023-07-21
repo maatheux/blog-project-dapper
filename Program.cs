@@ -24,7 +24,7 @@ class Program
             PasswordHash = "hash",
             Slug = "teste-user",
         };
-        CreateUser(connection, myNewUser);
+        // CreateUser(connection, myNewUser);
         // UpdateUser(connection, myNewUser);
         // DeleteUser(connection, myNewUser);
 
@@ -37,8 +37,8 @@ class Program
 
     public static void ReadUsers(SqlConnection connection)
     {
-        var repository = new Repository<User>(connection);
-        IEnumerable<User> users = repository.Get();
+        var repository = new UserRepository(connection);
+        IEnumerable<User> users = repository.GetWithRoles();
 
         foreach (User user in users)
         {
