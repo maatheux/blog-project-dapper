@@ -14,5 +14,7 @@ public class User
   public string Bio { get; set; }
   public string Image { get; set; }
   public string Slug { get; set; }
+  
+  [Write(false)] // usamos o Write(false) para nao incluir os Roles no insert
   public List<Role> Roles { get; set; }
 }

@@ -24,7 +24,7 @@ class Program
             PasswordHash = "hash",
             Slug = "teste-user",
         };
-        // CreateUser(connection, myNewUser);
+        CreateUser(connection, myNewUser);
         // UpdateUser(connection, myNewUser);
         // DeleteUser(connection, myNewUser);
 
