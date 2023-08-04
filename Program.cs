@@ -30,7 +30,7 @@ class Program
                 
                 if (key == ConsoleKey.D2)
                 {
-                    Console.WriteLine("Vinculo");
+                    RelateTable(connection);
                 }
 
                 if (key == ConsoleKey.D3)
@@ -78,11 +78,14 @@ class Program
         if (registerType == ConsoleKey.D2)
             CreateRole(connection);
         
-        if (registerType != ConsoleKey.D3)
+        if (registerType == ConsoleKey.D3)
             CreateCategory(connection);
         
-        if (registerType != ConsoleKey.D4)
+        if (registerType == ConsoleKey.D4)
             CreateTag(connection);
+        
+        if (registerType == ConsoleKey.D5)
+            CreatePost(connection);
 
             
     }
@@ -105,8 +108,86 @@ class Program
 
     }
 
+    public static void RelateTable(SqlConnection connection)
+    {
+        Console.Clear();
+        Console.WriteLine("Qual vínculo deseja realizar");
+        Console.WriteLine("1 - Usuário-Perfil / 2 - Post-Tag");
+        Console.WriteLine("-------------------------------------------------------");
+        ConsoleKey typeLink = Console.ReadKey().Key;
+
+        Console.Clear();
+
+        if (typeLink == ConsoleKey.D1)
+        {
+            LinkUserRole(connection);
+        }
+
+    }
+
+    public static void LinkUserRole(SqlConnection connection)
+    {
+        User? user;
+        Role? role;
+        
+        do
+        {
+            Console.WriteLine($"Escolha o usuário abaixo pelo Id");
+            ReadUsersWithRoles(connection);
+
+            string selectedUser = Console.ReadLine() ?? "";
+            Console.Clear();
+
+            user = new Repository<User>(connection).Get(int.Parse(selectedUser));
+
+            if (user == null)
+            {
+                Console.WriteLine($"O Id {selectedUser} não foi encontrado! Digite novamente um Id válido...");
+                Thread.Sleep(4000);
+                Console.Clear();
+            }       
+        }
+        while (user == null);
+
+        do
+        {
+            Console.WriteLine($"Escolha o perfil abaixo pelo Id");
+            ReadRoles(connection);
+            string selectedRole = Console.ReadLine() ?? "";
+
+            role = new Repository<Role>(connection).Get(int.Parse(selectedRole));
+
+            if (role == null)
+            {
+                Console.WriteLine($"O Id {selectedRole} não foi encontrado! Digite novamente um Id válido...");
+                Thread.Sleep(4000);
+                Console.Clear();
+            }
+        }
+        while (role == null);
+
+        Console.Clear();
+        Console.WriteLine("Vinculando...");
+        Thread.Sleep(3000);
+
+        UserRole linkedObject = new UserRole() 
+        {
+            UserId = user.Id,
+            RoleId = role.Id,
+        };
+        
+        new Repository<UserRole>(connection).Create(linkedObject);
+
+        Console.Clear();
+        Console.WriteLine("Usuário e Perfil vinculados!");
+        Thread.Sleep(3000);
+
+    }
 
 
+
+    
+    
     // USER
     public static void ReadUsersWithRoles(SqlConnection connection)
     {
@@ -116,7 +197,7 @@ class Program
         Console.WriteLine("");
         foreach (User user in users)
         {
-            Console.WriteLine($"Nome: {user.Name} / Email: {user.Email}");
+            Console.WriteLine($"Id do Usuário: {user.Id} /Nome: {user.Name} / Email: {user.Email}");
             
             int index = 0;
             Console.Write("Perfil(s): ");
@@ -181,9 +262,11 @@ class Program
         var repository = new Repository<Role>(connection);
         IEnumerable<Role> roles = repository.Get();
 
+        Console.WriteLine("Perfis disponíveis");
         foreach (Role role in roles)
         {
-            Console.WriteLine(role.Name);
+            Console.WriteLine($"Id: {role.Id} / Nome: {role.Name}");
+            Console.WriteLine("---------------------------------------------------");
         }
     }
 
@@ -244,6 +327,17 @@ class Program
         repository.Create(category);
     }
 
+    public static void ReadCategories(SqlConnection connection)
+    {
+        IEnumerable<Category> categories = new Repository<Category>(connection).Get();
+
+        foreach(Category category in categories)
+        {
+            Console.WriteLine($"Id: {category.Id} / Nome: {category.Name} / Slug: {category.Slug}");
+            Console.WriteLine("---------------------------------------------------");
+        }
+    }
+
 
     // POST
     public static void CreatePost(SqlConnection connection)
@@ -260,7 +354,48 @@ class Program
         Console.Write("Url Slug: ");
         post.Slug = Console.ReadLine();
 
+        User? user;
+        Category? category;
 
+        Console.WriteLine("");
+        Console.WriteLine("Escolha uma categoria para esse post");
+        ReadCategories(connection);
+        do
+        {
+            string selectedCategory = Console.ReadLine();
+
+            category = new Repository<Category>(connection).Get(int.Parse(selectedCategory));
+
+            if (category == null)
+            {
+                Console.SetCursorPosition(0, Console.CursorTop - 1);
+            }
+        }
+        while (category == null);
+
+        Console.WriteLine("");
+        Console.WriteLine("Escolha um Autor para esse post");
+        ReadUsersWithRoles(connection);
+        do
+        {
+            string selectedUser = Console.ReadLine();
+
+            user = new Repository<User>(connection).Get(int.Parse(selectedUser));
+
+            if (user == null)
+            {
+                Console.SetCursorPosition(0, Console.CursorTop - 1);
+            }
+        }
+        while (user == null);
+
+        post.CategoryId = category.Id;
+        post.AuthorId = user.Id;
+
+        post.CreateDate = DateTime.Now;
+        post.LastUpdateDate = DateTime.Now;
+
+        new Repository<Post>(connection).Create(post);
 
     }
 
