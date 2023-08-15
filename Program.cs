@@ -94,7 +94,7 @@ class Program
     {
         Console.Clear();
         Console.WriteLine("O que gostaria de listar?");
-        Console.WriteLine("1 - Usuários / 2 - Perfis / 3 - Categorias / 4 - Tags / 5 - Posts");
+        Console.WriteLine("1 - Usuários / 2 - Categorias com Qtd de Posts / 3 - Categorias / 4 - Tags / 5 - Posts");
         Console.WriteLine("-------------------------------------------------------");
         ConsoleKey typeList = Console.ReadKey().Key;
 
@@ -102,6 +102,9 @@ class Program
 
         if (typeList == ConsoleKey.D1)
             ReadUsersWithRoles(connection);
+        
+        if (typeList == ConsoleKey.D2)
+            ListCategoryWithPostsCount(connection);
         
         Console.ReadKey();
         Console.Clear();
@@ -334,6 +337,19 @@ class Program
         foreach(Category category in categories)
         {
             Console.WriteLine($"Id: {category.Id} / Nome: {category.Name} / Slug: {category.Slug}");
+            Console.WriteLine("---------------------------------------------------");
+        }
+    }
+
+    public static void ListCategoryWithPostsCount(SqlConnection connection)
+    {
+        IEnumerable<Category> categories = new CategoryRepository(connection).ListCategoryWithPosts();
+
+        Console.WriteLine("Lista de categorias com quantidade de Posts");
+        Console.WriteLine("");
+        foreach(Category category in categories)
+        {
+            Console.WriteLine($"Nome: {category.Name} / Quantidade de Posts: {category.Posts.Count}");
             Console.WriteLine("---------------------------------------------------");
         }
     }
