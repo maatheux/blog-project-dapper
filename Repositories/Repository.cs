@@ -13,8 +13,8 @@ public class Repository<T> where T : class // usamos generics pra quando instanc
   public IEnumerable<T> Get()
     => _connection.GetAll<T>();
 
-    public T Get(int id)
-    => _connection.Get<T>(id);
+  public T Get(int id)
+  => _connection.Get<T>(id);
 
   public void Create(T model)
   {

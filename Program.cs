@@ -35,6 +35,8 @@ class Program
 
                 if (key == ConsoleKey.D3)
                 {
+                    Console.WriteLine("Listando...");
+                    Thread.Sleep(2000);
                     ListData(connection);
                 }
 
@@ -126,6 +128,9 @@ class Program
             LinkUserRole(connection);
         }
 
+        if (typeLink == ConsoleKey.D2)
+            LinkPostTag(connection);
+
     }
 
     public static void LinkUserRole(SqlConnection connection)
@@ -187,7 +192,62 @@ class Program
 
     }
 
+    public static void LinkPostTag(SqlConnection connection)
+    {
+        Post? post;
+        Tag? tag;
 
+        do
+        {
+            Console.WriteLine("Escolha o post abaixo pelo Id");
+            ListPosts(connection);
+
+            string postIdSelected = Console.ReadLine() ?? "";
+
+            post = new Repository<Post>(connection).Get(int.Parse(postIdSelected));
+
+            if (post == null)
+            {
+                Console.WriteLine($"O Id {postIdSelected} não foi encontrado! Digite novamente um Id válido...");
+                Thread.Sleep(4000);
+                Console.Clear();
+            }
+
+        }
+        while (post == null);
+
+        do
+        {
+            Console.WriteLine("Escolha a tag abaixo pelo Id");
+            ReadTags(connection);
+
+            string tagIdSelected = Console.ReadLine() ?? "";
+
+            tag = new Repository<Tag>(connection).Get(int.Parse(tagIdSelected));
+
+            if (tag == null)
+            {
+                Console.WriteLine($"O Id {tagIdSelected} não foi encontrado! Digite novamente um Id válido...");
+                Thread.Sleep(4000);
+                Console.Clear();
+            }
+
+        }
+        while (tag == null);
+
+        var postTagRepo = new Repository<PostTag>(connection);
+
+        PostTag newPostTag = new PostTag()
+        {
+            PostId = post.Id,
+            TagId = tag.Id,
+        };
+        postTagRepo.Create(newPostTag);
+
+        Console.Clear();
+        Console.WriteLine("Post e Tag vinculados!");
+        Thread.Sleep(3000);
+    }
 
     
     
@@ -294,9 +354,12 @@ class Program
         var repository = new Repository<Tag>(connection);
         IEnumerable<Tag> tags = repository.Get();
 
+        Console.WriteLine("Lista de tags");
+        Console.WriteLine("");
         foreach (Tag tag in tags)
         {
-            Console.WriteLine(tag.Name);
+            Console.WriteLine($"Id: {tag.Id} / Nome Tag: {tag.Name}");
+            Console.WriteLine("---------------------------------------------------");
         }
     }
 
@@ -413,6 +476,20 @@ class Program
 
         new Repository<Post>(connection).Create(post);
 
+    }
+
+    public static void ListPosts(SqlConnection connection)
+    {
+        var repository = new Repository<Post>(connection);
+        IEnumerable<Post> posts = repository.Get();
+
+        Console.WriteLine("Lista de posts");
+
+        foreach (Post post in posts)
+        {
+            Console.WriteLine($"Id: {post.Id} / Nome: {post.Title} / Resumo: {post.Summary}");
+            Console.WriteLine("---------------------------------------------------");
+        }
     }
 
     
