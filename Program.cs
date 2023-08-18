@@ -96,7 +96,7 @@ class Program
     {
         Console.Clear();
         Console.WriteLine("O que gostaria de listar?");
-        Console.WriteLine("1 - Usuários / 2 - Categorias com Qtd de Posts / 3 - Tags com Qtd de Posts / 4 - Tags / 5 - Posts");
+        Console.WriteLine("1 - Usuários / 2 - Categorias com Qtd de Posts / 3 - Tags com Qtd de Posts / 4 - Posts com sua categorias / 5 - Posts com suas tags");
         Console.WriteLine("-------------------------------------------------------");
         ConsoleKey typeList = Console.ReadKey().Key;
 
@@ -110,6 +110,12 @@ class Program
         
         if (typeList == ConsoleKey.D3)
             ReadTagsWithPostsCount(connection);
+        
+        if (typeList == ConsoleKey.D4)
+            ListPostsWithCategory(connection);
+        
+        if (typeList == ConsoleKey.D5)
+            ListPostsWithTags(connection);
         
         Console.ReadKey();
         Console.Clear();
@@ -535,6 +541,49 @@ class Program
         foreach (Post post in posts)
         {
             Console.WriteLine($"Id: {post.Id} / Nome: {post.Title} / Resumo: {post.Summary}");
+            Console.WriteLine("---------------------------------------------------");
+        }
+    }
+
+    public static void ListPostsWithCategory(SqlConnection connection)
+    {
+        var repository = new Repository<Post>(connection);
+        IEnumerable<Post> posts = repository.Get();
+
+        var categoryRepository = new Repository<Category>(connection);
+        IEnumerable<Category> categories = categoryRepository.Get();
+
+        Console.WriteLine("Lista de posts");
+
+        foreach (Post post in posts)
+        {
+            Console.WriteLine($"Id: {post.Id} / Nome: {post.Title} / Resumo: {post.Summary} / Categoria: {categories.FirstOrDefault(x => x.Id == post.CategoryId).Name}");
+            Console.WriteLine("---------------------------------------------------");
+        }
+    }
+
+
+    public static void ListPostsWithTags(SqlConnection connection)
+    {
+        var repository = new PostRepository(connection);
+
+        IEnumerable<Post> posts = repository.GetPostsWithTags();
+        foreach (Post post in posts)
+        {
+            Console.WriteLine($"Id: {post.Id} / Nome: {post.Title} / Resumo: {post.Summary}");
+            
+            Console.Write("Tags: ");
+            int index = 0;
+            foreach(Tag tag in post.Tags)
+            {
+                if (index + 1 < post.Tags.Count)
+                    Console.Write($"{tag.Name}, ");
+                else
+                    Console.Write($"{tag.Name}");
+
+                index++;
+            }
+            Console.WriteLine("");
             Console.WriteLine("---------------------------------------------------");
         }
     }
