@@ -96,7 +96,7 @@ class Program
     {
         Console.Clear();
         Console.WriteLine("O que gostaria de listar?");
-        Console.WriteLine("1 - Usuários / 2 - Categorias com Qtd de Posts / 3 - Categorias / 4 - Tags / 5 - Posts");
+        Console.WriteLine("1 - Usuários / 2 - Categorias com Qtd de Posts / 3 - Tags com Qtd de Posts / 4 - Tags / 5 - Posts");
         Console.WriteLine("-------------------------------------------------------");
         ConsoleKey typeList = Console.ReadKey().Key;
 
@@ -107,6 +107,9 @@ class Program
         
         if (typeList == ConsoleKey.D2)
             ListCategoryWithPostsCount(connection);
+        
+        if (typeList == ConsoleKey.D3)
+            ReadTagsWithPostsCount(connection);
         
         Console.ReadKey();
         Console.Clear();
@@ -363,6 +366,22 @@ class Program
         }
     }
 
+    public static void ReadTagsWithPostsCount(SqlConnection connection)
+    {
+        var repository = new TagRepository(connection);
+        IEnumerable<Tag> tags = repository.GetTagsWithPosts();
+
+        Console.WriteLine("Lista de Tags com quantidade de Posts vinculados");
+        Console.WriteLine("");
+
+        foreach(Tag tag in tags)
+        {
+            Console.WriteLine($"Nome: {tag.Name} / Quantidade de Posts: {tag.Posts.Count}");
+            Console.WriteLine("---------------------------------------------------");
+        }
+
+    }
+
     public static void CreateTag(SqlConnection connection)
     {
         Console.WriteLine("");
@@ -406,15 +425,43 @@ class Program
 
     public static void ListCategoryWithPostsCount(SqlConnection connection)
     {
-        IEnumerable<Category> categories = new CategoryRepository(connection).ListCategoryWithPosts();
+        var repository = new CategoryRepository(connection);
+        IEnumerable<Category> categories = repository.ListCategoryWithPosts();
 
         Console.WriteLine("Lista de categorias com quantidade de Posts");
         Console.WriteLine("");
         foreach(Category category in categories)
         {
-            Console.WriteLine($"Nome: {category.Name} / Quantidade de Posts: {category.Posts.Count}");
+            Console.WriteLine($"Id: {category.Id} / Nome: {category.Name} / Quantidade de Posts: {category.Posts.Count}");
             Console.WriteLine("---------------------------------------------------");
         }
+
+        Category? categorySelected;
+        
+        do
+        {
+            Console.WriteLine("");
+            Console.WriteLine("Escolha pelo Id para listar os posts de alguma categoria");
+            string idCategorySelected = Console.ReadLine() ?? "";
+            
+            categorySelected = categories.FirstOrDefault(x => x.Id == int.Parse(idCategorySelected));
+
+            if (categorySelected == null)
+            {
+                Console.WriteLine($"O Id {idCategorySelected} não foi encontrado! Digite novamente um Id válido...");
+            }
+
+        }
+        while (categorySelected == null);
+
+        Console.WriteLine("");
+        Console.WriteLine($"Posts da categoria {categorySelected.Name}");
+        foreach (Post post in categorySelected.Posts)
+        {
+            Console.WriteLine($"Id: {post.Id} / Nome: {post.Title} / Resumo: {post.Summary}");
+            Console.WriteLine("---------------------------------------------------");
+        }
+
     }
 
 
