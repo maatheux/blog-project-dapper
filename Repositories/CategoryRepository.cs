@@ -8,7 +8,7 @@ public class CategoryRepository : Repository<Category>
 {
   private readonly SqlConnection _connection;
 
-  public CategoryRepository(SqlConnection connection) : base(connection) => _connection = connection;
+  public CategoryRepository(SqlConnection connection) : base() => _connection = connection;
 
   public List<Category> ListCategoryWithPosts()
   {

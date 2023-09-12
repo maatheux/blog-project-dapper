@@ -8,7 +8,7 @@ public class PostRepository : Repository<Post>
 {
   private readonly SqlConnection _connection;
 
-  public PostRepository(SqlConnection connection) : base(connection) => _connection = connection;
+  public PostRepository(SqlConnection connection) : base() => _connection = connection;
 
   public List<Post> GetPostsWithTags()
   {

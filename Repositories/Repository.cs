@@ -7,8 +7,8 @@ public class Repository<T> where T : class // usamos generics pra quando instanc
 {
   private readonly SqlConnection _connection;
 
-  public Repository(SqlConnection connection)
-    => _connection = connection;
+  public Repository()
+    => _connection = Database.Connection;
 
   public IEnumerable<T> Get()
     => _connection.GetAll<T>();

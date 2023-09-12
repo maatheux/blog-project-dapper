@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using projeto_blog.Models;
 using projeto_blog.Repositories;
+using projeto_blog.Screens.TagScreens;
 
 namespace projeto_blog;
 
@@ -11,46 +12,45 @@ class Program
 
     static void Main(string[] args)
     {
-        ConsoleKey key = Greetings();
-        while (key != ConsoleKey.Escape)
-        {
-            if ((new List<ConsoleKey>() {ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3}).Contains(key))
-            {
-                var connection = new SqlConnection(CONNECTION_STRING);
-                connection.Open();
+        Database.Connection = new SqlConnection(CONNECTION_STRING);
+        Database.Connection.Open();
 
-                if (key == ConsoleKey.D1)
-                {
-                    Console.WriteLine("Cadastro...");
-                    Thread.Sleep(2000);
-                    Register(connection);
-                    Console.WriteLine("Registro Inserido!");
-                    Thread.Sleep(4000);
-                }
-                
-                if (key == ConsoleKey.D2)
-                {
-                    RelateTable(connection);
-                }
+        Load();
 
-                if (key == ConsoleKey.D3)
-                {
-                    Console.WriteLine("Listando...");
-                    Thread.Sleep(2000);
-                    ListData(connection);
-                }
-
-                connection.Close();
-            }
-
-            key = Greetings();
-        }
-        Console.WriteLine("Saindo...");
-        Thread.Sleep(3000);
-        Console.Clear();
+        Console.ReadKey();
+        Database.Connection.Close();
+        
+        
     }
 
-    public static ConsoleKey Greetings()
+    private static void Load()
+    {
+        Console.WriteLine("--------------------------");
+        Console.WriteLine("O que desja fazer?");
+        Console.WriteLine();
+        Console.WriteLine("1 - Gestão de usuário / 2 - Gestão de perfil / 3 - Gestão de categoria / 4 - Gestão de tag / 5 - Vincular perfil/usuário / 6 - Vincular post/tag / 7 - Relatórios");
+        Console.WriteLine();
+        Console.WriteLine();
+
+        var option = short.Parse(Console.ReadLine()!);
+
+        switch (option)
+        {
+            case 4:
+                MenuTagScreen.Load();
+                break;
+            default: Load(); break;
+        }
+
+
+    }
+
+
+
+
+
+
+    /* public static ConsoleKey Greetings()
     {
         Console.Clear();
         Console.WriteLine("Bem vindo ao sistema do Blog!");
@@ -587,6 +587,6 @@ class Program
             Console.WriteLine("---------------------------------------------------");
         }
     }
-
+ */
     
 }

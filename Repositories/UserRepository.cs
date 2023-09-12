@@ -9,7 +9,7 @@ public class UserRepository : Repository<User>
 {
   private readonly SqlConnection _connection;
 
-  public UserRepository(SqlConnection connection) : base(connection) => _connection = connection; // base passa os params pra classe mae
+  public UserRepository(SqlConnection connection) : base() => _connection = connection; // base passa os params pra classe mae
 
   public List<User> GetWithRoles()
   {
