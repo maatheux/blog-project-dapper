@@ -11,6 +11,9 @@ public static class ListTagsScreen
     Console.WriteLine("Lista de tags");
     Console.WriteLine("");
     List();
+    Console.ReadKey();
+    MenuTagScreen.Load();
+
   }
 
   private static void List()
